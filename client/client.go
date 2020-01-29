@@ -47,8 +47,7 @@ func listenServer(servIn chan string, conn *clientConn) {
 		buf := make([]byte, 512)
 		n, err := conn.Read(buf)
 		if err != nil {
-			fmt.Println("Read error")
-			conn.Close()
+			fmt.Printf("client: read error. %s\n", err.Error())
 			return
 		}
 		mesBytes = append(mesBytes, buf[:n]...)
@@ -72,7 +71,7 @@ func Run(addr string) {
 	console.SetScanner(sc)
 	co, err := net.Dial("tcp", addr)
 	if err != nil {
-		console.Writeln("Dial error")
+		console.Writef("client: dial error. %s", err.Error())
 		return
 	}
 	defer co.Close()

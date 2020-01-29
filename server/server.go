@@ -36,8 +36,15 @@ func serveRoom(in <-chan message, newConn <-chan *serverConn) {
 		case mes := <-in:
 			connPool.publish(fmt.Sprintf("%s: %s", mes.User, string(mes.Data)))
 		case conn := <-newConn:
-			connPool[conn.User] = conn
-			connPool.publish(fmt.Sprintf("%s joined!", conn.User))
+			// Add connection to pool.
+			// If the key that's already in pool sent, treat it as the signal of leave.
+			if _, ok := connPool[conn.User]; ok {
+				delete(connPool, conn.User)
+				connPool.publish(fmt.Sprintf("%s left.", conn.User))
+			} else {
+				connPool[conn.User] = conn
+				connPool.publish(fmt.Sprintf("%s joined!", conn.User))
+			}
 		}
 	}
 }
@@ -63,7 +70,8 @@ func handle(conn *serverConn, connCh chan *serverConn, room chan message) {
 		buf := make([]byte, 512)
 		n, err := conn.Read(buf)
 		if err != nil {
-			fmt.Printf("Read error: %s", err.Error())
+			fmt.Printf("server: read error %s\n", err.Error())
+			connCh <- conn
 			return
 		}
 		mesBytes = append(mesBytes, buf[:n]...)
@@ -77,17 +85,18 @@ func handle(conn *serverConn, connCh chan *serverConn, room chan message) {
 
 func Serve(addr string) {
 	listner, err := net.Listen("tcp", addr)
-	defer listner.Close()
 	if err != nil {
-		panic("Cannot listen")
+		fmt.Printf("server: cannot listen. %s\n", err.Error())
+		return
 	}
+	defer listner.Close()
 	room := make(chan message)
 	connCh := make(chan *serverConn)
 	go serveRoom(room, connCh)
 	for {
 		co, err := listner.Accept()
 		if err != nil {
-			fmt.Println("Cannot establish connection")
+			fmt.Printf("server: cannot establish connection. %s\n", err.Error())
 			continue
 		}
 		defer co.Close()
