@@ -2,11 +2,12 @@ package client
 
 import (
 	"bufio"
-	"chat/common"
-	"chat/console"
 	"fmt"
 	"net"
 	"os"
+
+	"github.com/sabigara/go-chat/common"
+	"github.com/sabigara/go-chat/console"
 )
 
 type clientConn struct {

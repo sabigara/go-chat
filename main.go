@@ -1,9 +1,10 @@
 package main
 
 import (
-	"chat/server"
-	"chat/client"
 	"flag"
+
+	"github.com/sabigara/go-chat/client"
+	"github.com/sabigara/go-chat/server"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 	} else {
 		addr = "localhost:9999"
 	}
-	
+
 	switch cmd {
 	case "server":
 		server.Serve(addr)

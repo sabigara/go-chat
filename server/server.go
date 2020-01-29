@@ -1,9 +1,10 @@
 package server
 
 import (
-	"chat/common"
 	"fmt"
 	"net"
+
+	"github.com/sabigara/go-chat/common"
 )
 
 type message struct {
