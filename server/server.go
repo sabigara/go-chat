@@ -84,17 +84,17 @@ func handle(conn *serverConn, connCh chan *serverConn, room chan message) {
 }
 
 func Serve(addr string) {
-	listner, err := net.Listen("tcp", addr)
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		fmt.Printf("server: cannot listen. %s\n", err.Error())
 		return
 	}
-	defer listner.Close()
+	defer listener.Close()
 	room := make(chan message)
 	connCh := make(chan *serverConn)
 	go serveRoom(room, connCh)
 	for {
-		co, err := listner.Accept()
+		co, err := listener.Accept()
 		if err != nil {
 			fmt.Printf("server: cannot establish connection. %s\n", err.Error())
 			continue
