@@ -6,6 +6,16 @@ Tiny chat application built in golang on top of TCP.
 
 Multiple users can join a room, and share messages.
 
+## Compatibility
+
+Confirmed the client works on:
+
+* iTerm2 on macOS Catalina
+
+* [Windows Terminal](https://www.microsoft.com/ja-jp/p/windows-terminal-preview/9n0dx20hk701?activetab=pivot:overviewtab) (PowerShell) on Windows 10
+
+Command Prompt and PowerShell are not aware of ANSI escape codes, so that user input is not erased.
+
 ## How to use
 
 ### Install
